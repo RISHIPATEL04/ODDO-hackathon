@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Employees - HR Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/admin-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-users"></i>
+                <h2>HRMS Admin</h2>
+            </div>
+            
+            <div class="user-info">
+                <div class="avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3 id="userName">Admin User</h3>
+                <p id="userRole">Administrator</p>
+                <p id="userEmpId">ADMIN001</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="admin-dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="admin-employees.html" class="active">
+                    <i class="fas fa-users-cog"></i> Employees
+                </a>
+                <a href="attendance.html?admin=true">
+                    <i class="fas fa-calendar-check"></i> Attendance
+                </a>
+                <a href="admin-leave-approval.html">
+                    <i class="fas fa-calendar-alt"></i> Leave Approval
+                </a>
+                <a href="admin-payroll.html">
+                    <i class="fas fa-file-invoice-dollar"></i> Payroll
+                </a>
+                <a href="#" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Manage Employees</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="openAddEmployeeModal()">
+                        <i class="fas fa-user-plus"></i> Add New Employee
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportEmployees()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Employee Statistics -->
+            <div class="employee-stats">
+                <div class="stat-card">
+                    <div class="card-icon primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Total Employees</h3>
+                        <p id="totalEmployees">0</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="card-icon success">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Active Employees</h3>
+                        <p id="activeEmployees">0</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="card-icon warning">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>On Probation</h3>
+                        <p id="probationEmployees">0</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="card-icon info">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>New This Month</h3>
+                        <p id="newEmployees">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filters and Search -->
+            <div class="filters-section">
+                <div class="filter-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchEmployees" placeholder="Search employees...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <select id="filterDepartment">
+                            <option value="">All Departments</option>
+                            <option value="hr">HR</option>
+                            <option value="engineering">Engineering</option>
+                            <option value="sales">Sales</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="finance">Finance</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <select id="filterStatus">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="probation">Probation</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <select id="filterRole">
+                            <option value="">All Roles</option>
+                            <option value="employee">Employee</option>
+                            <option value="admin">Admin</option>
+                            <option value="manager">Manager</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="applyFilters()">
+                        <i class="fas fa-filter"></i> Apply Filters
+                    </button>
+                    
+                    <button class="btn btn-outline" onclick="clearFilters()">
+                        <i class="fas fa-times"></i> Clear
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Employees Table -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>Employee Directory</h2>
+                    <div id="employeeCount">Showing 0 employees</div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAll">
+                                </th>
+                                <th>Employee ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Position</th>
+                                <th>Join Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeesTable">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination">
+                    <button class="btn btn-outline" id="prevPage" disabled>Previous</button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button class="btn btn-outline" id="nextPage" disabled>Next</button>
+                </div>
+            </div>
+            
+            <!-- Bulk Actions -->
+            <div class="bulk-actions" id="bulkActions" style="display: none;">
+                <div class="bulk-actions-content">
+                    <span id="selectedCount">0 employees selected</span>
+                    <div class="bulk-buttons">
+                        <button class="btn btn-warning" onclick="bulkUpdateStatus('active')">
+                            <i class="fas fa-check-circle"></i> Mark as Active
+                        </button>
+                        <button class="btn btn-warning" onclick="bulkUpdateStatus('inactive')">
+                            <i class="fas fa-times-circle"></i> Mark as Inactive
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteSelected()">
+                            <i class="fas fa-trash"></i> Delete Selected
+                        </button>
+                        <button class="btn btn-outline" onclick="clearSelection()">
+                            <i class="fas fa-times"></i> Clear Selection
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Add/Edit Employee Modal -->
+    <div id="employeeModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Employee</h2>
+                <button class="modal-close" onclick="closeEmployeeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="employeeForm">
+                    <input type="hidden" id="employeeId">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="empEmail">Email *</label>
+                            <input type="email" id="empEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="empPhone">Phone</label>
+                            <input type="tel" id="empPhone">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="empId">Employee ID *</label>
+                            <input type="text" id="empId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="empRole">Role *</label>
+                            <select id="empRole" required>
+                                <option value="employee">Employee</option>
+                                <option value="admin">Admin</option>
+                                <option value="manager">Manager</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="empDepartment">Department *</label>
+                            <select id="empDepartment" required>
+                                <option value="">Select Department</option>
+                                <option value="hr">HR</option>
+                                <option value="engineering">Engineering</option>
+                                <option value="sales">Sales</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="finance">Finance</option>
+                                <option value="operations">Operations</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="empPosition">Position *</label>
+                            <input type="text" id="empPosition" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="empJoinDate">Join Date *</label>
+                            <input type="date" id="empJoinDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="empStatus">Status</label>
+                            <select id="empStatus">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="probation">Probation</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="empSalary">Basic Salary</label>
+                        <input type="number" id="empSalary" step="0.01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="empAddress">Address</label>
+                        <textarea id="empAddress" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="password-section" id="passwordSection">
+                            <label for="empPassword">Password *</label>
+                            <input type="password" id="empPassword" required>
+                            <small class="form-hint">Leave blank to keep current password</small>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeEmployeeModal()">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Save Employee
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- View Employee Details Modal -->
+    <div id="viewEmployeeModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Employee Details</h2>
+                <button class="modal-close" onclick="closeViewModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="employee-details">
+                    <div class="employee-header">
+                        <div class="employee-avatar-large">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="employee-basic">
+                            <h3 id="viewEmpName">-</h3>
+                            <p id="viewEmpPosition">-</p>
+                            <p id="viewEmpDepartment">-</p>
+                        </div>
+                    </div>
+                    
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <label>Employee ID</label>
+                            <p id="viewEmpId">-</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Email</label>
+                            <p id="viewEmpEmail">-</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Phone</label>
+                            <p id="viewEmpPhone">-</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Join Date</label>
+                            <p id="viewEmpJoinDate">-</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Role</label>
+                            <p id="viewEmpRole">-</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Status</label>
+                            <span id="viewEmpStatus" class="status-badge">-</span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Address</label>
+                            <p id="viewEmpAddress">-</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Basic Salary</label>
+                            <p id="viewEmpSalary">-</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeViewModal()">
+                        Close
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="editEmployee()">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/auth.js"></script>
+    <script src="js/admin-employees.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initEmployeesPage();
+        });
+    </script>
+</body>
+</html>
