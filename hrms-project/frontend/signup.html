@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - HR Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-users"></i>
+                <h1>HR Management System</h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="login.html">Login</a>
+                <a href="signup.html" class="active">Sign Up</a>
+            </div>
+        </nav>
+        
+        <main class="auth-container">
+            <div class="auth-card">
+                <h2>Create Your Account</h2>
+                <p>Join our HR Management System to streamline your HR operations</p>
+                
+                <form id="signupForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="employeeId">Employee ID *</label>
+                            <input type="text" id="employeeId" name="employeeId" required 
+                                   placeholder="Enter your employee ID">
+                            <small class="form-hint">Provided by your HR department</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="role">Role *</label>
+                            <select id="role" name="role" required>
+                                <option value="" disabled selected>Select your role</option>
+                                <option value="employee">Employee</option>
+                                <option value="admin">Admin/HR Officer</option>
+                            </select>
+                            <small class="form-hint">Admins require approval</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" name="firstName" required 
+                                   placeholder="Enter your first name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" name="lastName" required 
+                                   placeholder="Enter your last name">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required 
+                               placeholder="Enter your email">
+                        <small class="form-hint">We'll send a verification email</small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">Password *</label>
+                            <div class="password-input">
+                                <input type="password" id="password" name="password" required 
+                                       placeholder="Create a password" minlength="6">
+                                <button type="button" class="toggle-password" onclick="togglePassword('password')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <small class="form-hint">Minimum 6 characters</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password *</label>
+                            <div class="password-input">
+                                <input type="password" id="confirmPassword" name="confirmPassword" required 
+                                       placeholder="Confirm your password">
+                                <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" 
+                               placeholder="Enter your phone number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="terms-checkbox">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">
+                                I agree to the <a href="#" onclick="showTerms()">Terms of Service</a> and 
+                                <a href="#" onclick="showPrivacy()">Privacy Policy</a>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block" id="signupBtn">
+                            <span id="signupText">Create Account</span>
+                            <div class="spinner hidden" id="signupSpinner"></div>
+                        </button>
+                    </div>
+                    
+                    <div class="form-footer">
+                        <p>Already have an account? <a href="login.html">Login here</a></p>
+                    </div>
+                </form>
+                
+                <div id="message" class="message hidden"></div>
+                
+                <div class="demo-note">
+                    <h3><i class="fas fa-info-circle"></i> Important Note</h3>
+                    <p>For demo purposes, you can sign up as either an Employee or Admin. In a production environment, Admin accounts would require additional verification.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Terms Modal -->
+    <div id="termsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Terms of Service</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>HR Management System Terms</h3>
+                <p>Welcome to the HR Management System. By registering for an account, you agree to the following terms:</p>
+                
+                <h4>1. Account Responsibility</h4>
+                <p>You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
+                
+                <h4>2. Proper Use</h4>
+                <p>You agree to use the HRMS only for legitimate HR purposes related to your employment or administrative duties.</p>
+                
+                <h4>3. Data Accuracy</h4>
+                <p>You are responsible for maintaining accurate and up-to-date personal information in your profile.</p>
+                
+                <h4>4. System Access</h4>
+                <p>Access is granted based on your role within the organization. Unauthorized access attempts will result in account suspension.</p>
+                
+                <h4>5. Privacy</h4>
+                <p>All personal and employment data is handled in accordance with our Privacy Policy and applicable data protection laws.</p>
+                
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Privacy Modal -->
+    <div id="privacyModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Privacy Policy</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>HRMS Data Protection Policy</h3>
+                <p>We are committed to protecting your personal and employment information.</p>
+                
+                <h4>1. Data Collection</h4>
+                <p>We collect only necessary personal and employment information required for HR management purposes.</p>
+                
+                <h4>2. Data Usage</h4>
+                <p>Your data is used exclusively for HR operations including payroll, attendance tracking, leave management, and employee records.</p>
+                
+                <h4>3. Data Security</h4>
+                <p>We implement industry-standard security measures to protect your information from unauthorized access.</p>
+                
+                <h4>4. Data Sharing</h4>
+                <p>Your information is shared only with authorized HR personnel and as required by law.</p>
+                
+                <h4>5. Your Rights</h4>
+                <p>You have the right to access, correct, or request deletion of your personal information.</p>
+                
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/auth.js"></script>
+    <script>
+        // Password visibility toggle
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const toggleBtn = field.parentElement.querySelector('.toggle-password i');
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                toggleBtn.className = 'fas fa-eye-slash';
+            } else {
+                field.type = 'password';
+                toggleBtn.className = 'fas fa-eye';
+            }
+        }
+        
+        // Modal functions
+        function showTerms() {
+            document.getElementById('termsModal').classList.remove('hidden');
+        }
+        
+        function showPrivacy() {
+            document.getElementById('privacyModal').classList.remove('hidden');
+        }
+        
+        function closeModal() {
+            document.getElementById('termsModal').classList.add('hidden');
+            document.getElementById('privacyModal').classList.add('hidden');
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const termsModal = document.getElementById('termsModal');
+            const privacyModal = document.getElementById('privacyModal');
+            
+            if (event.target === termsModal) {
+                termsModal.classList.add('hidden');
+            }
+            if (event.target === privacyModal) {
+                privacyModal.classList.add('hidden');
+            }
+        };
+        
+        // Form validation
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const email = document.getElementById('email').value;
+            const employeeId = document.getElementById('employeeId').value;
+            
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                showMessage('Passwords do not match', 'error');
+                return false;
+            }
+            
+            // Check password strength
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters', 'error');
+                return false;
+            }
+            
+            // Simple email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showMessage('Please enter a valid email address', 'error');
+                return false;
+            }
+            
+            // Check employee ID format (alphanumeric, at least 3 characters)
+            const idRegex = /^[A-Za-z0-9]{3,}$/;
+            if (!idRegex.test(employeeId)) {
+                showMessage('Employee ID must be at least 3 alphanumeric characters', 'error');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Show/hide message
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Hide message
+        function hideMessage() {
+            document.getElementById('message').style.display = 'none';
+        }
+        
+        // Show/hide loading spinner
+        function setLoading(isLoading) {
+            const signupBtn = document.getElementById('signupBtn');
+            const signupText = document.getElementById('signupText');
+            const spinner = document.getElementById('signupSpinner');
+            
+            if (isLoading) {
+                signupBtn.disabled = true;
+                signupText.style.display = 'none';
+                spinner.classList.remove('hidden');
+            } else {
+                signupBtn.disabled = false;
+                signupText.style.display = 'inline';
+                spinner.classList.add('hidden');
+            }
+        }
+        
+        // Form submission
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Get form data
+            const formData = {
+                employeeId: document.getElementById('employeeId').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                role: document.getElementById('role').value,
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                phone: document.getElementById('phone').value || ''
+            };
+            
+            // Show loading state
+            setLoading(true);
+            hideMessage();
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Registration successful
+                    showMessage('Account created successfully! Redirecting to login...', 'success');
+                    
+                    // Store token and user data
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Redirect after delay
+                    setTimeout(() => {
+                        if (data.user.role === 'admin') {
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            window.location.href = 'employee-dashboard.html';
+                        }
+                    }, 2000);
+                } else {
+                    // Registration failed
+                    showMessage(data.message || 'Registration failed. Please try again.', 'error');
+                    setLoading(false);
+                }
+            } catch (error) {
+                // Network error
+                showMessage('Network error. Please check your connection and try again.', 'error');
+                console.error('Signup error:', error);
+                setLoading(false);
+            }
+        });
+        
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                // Verify token and redirect
+                fetch('http://localhost:5000/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Invalid token');
+                })
+                .then(user => {
+                    // Already logged in, redirect to appropriate dashboard
+                    if (user.role === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'employee-dashboard.html';
+                    }
+                })
+                .catch(() => {
+                    // Invalid token, clear storage
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                });
+            }
+            
+            // Generate a sample employee ID if field is empty
+            const employeeIdField = document.getElementById('employeeId');
+            if (!employeeIdField.value) {
+                // Generate a random employee ID for demo purposes
+                const randomId = 'EMP' + Math.floor(1000 + Math.random() * 9000);
+                employeeIdField.placeholder = `e.g., ${randomId}`;
+            }
+        });
+        
+        // Real-time password confirmation validation
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                this.style.borderColor = '#e74c3c';
+            } else {
+                this.style.borderColor = '#ddd';
+            }
+        });
+        
+        // Real-time password strength indicator
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthIndicator = document.getElementById('passwordStrength');
+            
+            // Create strength indicator if it doesn't exist
+            if (!strengthIndicator) {
+                const indicator = document.createElement('div');
+                indicator.id = 'passwordStrength';
+                indicator.className = 'password-strength';
+                this.parentElement.appendChild(indicator);
+            }
+            
+            // Update strength indicator
+            updatePasswordStrength(password);
+        });
+        
+        function updatePasswordStrength(password) {
+            const indicator = document.getElementById('passwordStrength');
+            if (!indicator) return;
+            
+            let strength = 0;
+            let feedback = '';
+            
+            // Check length
+            if (password.length >= 8) strength += 1;
+            
+            // Check for uppercase
+            if (/[A-Z]/.test(password)) strength += 1;
+            
+            // Check for lowercase
+            if (/[a-z]/.test(password)) strength += 1;
+            
+            // Check for numbers
+            if (/[0-9]/.test(password)) strength += 1;
+            
+            // Check for special characters
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            // Determine strength level
+            let strengthClass = 'weak';
+            let strengthText = 'Weak';
+            
+            if (strength >= 4) {
+                strengthClass = 'strong';
+                strengthText = 'Strong';
+            } else if (strength >= 3) {
+                strengthClass = 'medium';
+                strengthText = 'Medium';
+            }
+            
+            // Update indicator
+            indicator.innerHTML = `
+                <div class="strength-bar ${strengthClass}"></div>
+                <span class="strength-text">Strength: ${strengthText}</span>
+            `;
+            
+            // Show/hide indicator
+            indicator.style.display = password ? 'block' : 'none';
+        }
+    </script>
+    
+    <style>
+        /* Additional styles for signup page */
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .form-hint {
+            display: block;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        .password-input {
+            position: relative;
+        }
+        
+        .password-input input {
+            padding-right: 40px;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .toggle-password:hover {
+            color: #3498db;
+        }
+        
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .terms-checkbox input[type="checkbox"] {
+            margin-top: 5px;
+        }
+        
+        .terms-checkbox label {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .terms-checkbox a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+        
+        .demo-note {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .demo-note h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .demo-note h3 i {
+            color: #f39c12;
+        }
+        
+        .demo-note p {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 0;
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .modal-close:hover {
+            color: #e74c3c;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-body h3, .modal-body h4 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .modal-body h3 {
+            font-size: 20px;
+        }
+        
+        .modal-body h4 {
+            font-size: 16px;
+        }
+        
+        .modal-body p {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: right;
+        }
+        
+        /* Password strength indicator */
+        .password-strength {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+        
+        .strength-bar {
+            height: 4px;
+            width: 0;
+            background-color: #e74c3c;
+            border-radius: 2px;
+            transition: width 0.3s ease, background-color 0.3s ease;
+            margin-bottom: 3px;
+        }
+        
+        .strength-bar.weak {
+            width: 33%;
+            background-color: #e74c3c;
+        }
+        
+        .strength-bar.medium {
+            width: 66%;
+            background-color: #f39c12;
+        }
+        
+        .strength-bar.strong {
+            width: 100%;
+            background-color: #2ecc71;
+        }
+        
+        .strength-text {
+            color: #7f8c8d;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .modal-content {
+                width: 95%;
+                max-height: 90vh;
+            }
+        }
+    </style>
+</body>
+</html>
