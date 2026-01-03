@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - HR Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-users"></i>
+                <h2>HRMS Admin</h2>
+            </div>
+            
+            <div class="user-info">
+                <div class="avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3 id="userName">Admin User</h3>
+                <p id="userRole">Administrator</p>
+                <p id="userEmpId">ADMIN001</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="admin-dashboard.html" class="active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="admin-employees.html">
+                    <i class="fas fa-users-cog"></i> Employees
+                </a>
+                <a href="attendance.html?admin=true">
+                    <i class="fas fa-calendar-check"></i> Attendance
+                </a>
+                <a href="admin-leave-approval.html">
+                    <i class="fas fa-calendar-alt"></i> Leave Approval
+                </a>
+                <a href="admin-payroll.html">
+                    <i class="fas fa-file-invoice-dollar"></i> Payroll
+                </a>
+                <a href="employee-profile.html?admin=true">
+                    <i class="fas fa-user-edit"></i> My Profile
+                </a>
+                <a href="#" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Admin Dashboard</h1>
+                <div class="header-actions">
+                    <div class="date-display">
+                        <i class="fas fa-calendar"></i>
+                        <span id="currentDate"></span>
+                    </div>
+                    <button class="btn btn-primary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count" id="notificationCount">0</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Statistics Cards -->
+            <div class="dashboard-cards">
+                <div class="card stat-card">
+                    <div class="card-icon primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Total Employees</h3>
+                        <p id="totalEmployees">0</p>
+                        <small id="employeesChange" class="positive">+0 this month</small>
+                    </div>
+                </div>
+                
+                <div class="card stat-card">
+                    <div class="card-icon success">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Present Today</h3>
+                        <p id="presentToday">0</p>
+                        <small id="attendanceRate">0% attendance</small>
+                    </div>
+                </div>
+                
+                <div class="card stat-card">
+                    <div class="card-icon warning">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Pending Leaves</h3>
+                        <p id="pendingLeaves">0</p>
+                        <small id="leaveTrend" class="warning">Requires attention</small>
+                    </div>
+                </div>
+                
+                <div class="card stat-card">
+                    <div class="card-icon info">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Payroll Due</h3>
+                        <p id="payrollDue">$0</p>
+                        <small id="payrollDate">Due in 0 days</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions-row">
+                <h2>Quick Actions</h2>
+                <div class="quick-actions-grid">
+                    <a href="admin-employees.html" class="quick-action-card">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <h3>Add Employee</h3>
+                        <p>Register new employee</p>
+                    </a>
+                    
+                    <a href="admin-leave-approval.html" class="quick-action-card">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>Approve Leave</h3>
+                        <p>Review pending requests</p>
+                    </a>
+                    
+                    <a href="admin-payroll.html" class="quick-action-card">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <h3>Process Payroll</h3>
+                        <p>Generate salary slips</p>
+                    </a>
+                    
+                    <a href="#" class="quick-action-card" onclick="generateReport()">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h3>Generate Report</h3>
+                        <p>Create monthly report</p>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Dashboard Sections -->
+            <div class="dashboard-sections">
+                <!-- Recent Employees -->
+                <section class="section">
+                    <div class="section-header">
+                        <h2>Recent Employees</h2>
+                        <a href="admin-employees.html" class="btn-link">View All</a>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Employee ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Join Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentEmployees">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Pending Leave Requests -->
+                <section class="section">
+                    <div class="section-header">
+                        <h2>Pending Leave Requests</h2>
+                        <a href="admin-leave-approval.html" class="btn-link">View All</a>
+                    </div>
+                    <div class="leave-requests-list">
+                        <!-- Data will be populated by JavaScript -->
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Analytics Section -->
+            <section class="analytics-section">
+                <div class="section-header">
+                    <h2>Attendance Analytics</h2>
+                    <div class="date-filter">
+                        <select id="analyticsPeriod" onchange="loadAnalytics()">
+                            <option value="week">This Week</option>
+                            <option value="month" selected>This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="analytics-charts">
+                    <div class="chart-container">
+                        <canvas id="attendanceChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="departmentChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Recent Activity -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>Recent Admin Activity</h2>
+                </div>
+                <div class="activity-timeline">
+                    <!-- Data will be populated by JavaScript -->
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Notification Modal -->
+    <div id="notificationModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Notifications</h2>
+                <button class="modal-close" onclick="closeNotificationModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="notifications-list">
+                    <!-- Notifications will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Report Generator Modal -->
+    <div id="reportModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Generate Report</h2>
+                <button class="modal-close" onclick="closeReportModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="reportForm">
+                    <div class="form-group">
+                        <label for="reportType">Report Type</label>
+                        <select id="reportType" name="reportType" required>
+                            <option value="">Select report type</option>
+                            <option value="attendance">Attendance Report</option>
+                            <option value="leave">Leave Report</option>
+                            <option value="payroll">Payroll Report</option>
+                            <option value="employee">Employee Directory</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reportStartDate">Start Date</label>
+                            <input type="date" id="reportStartDate" name="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reportEndDate">End Date</label>
+                            <input type="date" id="reportEndDate" name="endDate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reportFormat">Format</label>
+                        <select id="reportFormat" name="format">
+                            <option value="pdf">PDF</option>
+                            <option value="excel">Excel</option>
+                            <option value="csv">CSV</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reportDepartment">Department (Optional)</label>
+                        <select id="reportDepartment" name="department">
+                            <option value="">All Departments</option>
+                            <option value="hr">HR</option>
+                            <option value="engineering">Engineering</option>
+                            <option value="sales">Sales</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="finance">Finance</option>
+                        </select>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeReportModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Generate Report</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+    <script>
+        // Initialize date pickers
+        flatpickr("#reportStartDate", {
+            dateFormat: "Y-m-d",
+            defaultDate: new Date()
+        });
+        
+        flatpickr("#reportEndDate", {
+            dateFormat: "Y-m-d",
+            defaultDate: new Date()
+        });
+    </script>
+</body>
+</html>

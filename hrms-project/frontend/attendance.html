@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance - HR Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/admin-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-users"></i>
+                <h2 id="sidebarTitle">HRMS</h2>
+            </div>
+            
+            <div class="user-info">
+                <div class="avatar">
+                    <i class="fas fa-user" id="avatarIcon"></i>
+                </div>
+                <h3 id="userName">User Name</h3>
+                <p id="userRole">Role</p>
+                <p id="userEmpId">EMP001</p>
+            </div>
+            
+            <nav class="sidebar-nav" id="sidebarNav">
+                <!-- Navigation will be loaded by JavaScript -->
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Attendance Management</h1>
+                <div class="header-actions">
+                    <div class="date-display">
+                        <i class="fas fa-calendar"></i>
+                        <span id="currentDate"></span>
+                    </div>
+                    <div class="attendance-controls">
+                        <button class="btn btn-success" id="checkInBtn">
+                            <i class="fas fa-sign-in-alt"></i> Check In
+                        </button>
+                        <button class="btn btn-warning" id="checkOutBtn" disabled>
+                            <i class="fas fa-sign-out-alt"></i> Check Out
+                        </button>
+                        <button class="btn btn-primary" onclick="refreshAttendance()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Attendance Stats -->
+            <div class="attendance-stats">
+                <div class="stat-card">
+                    <div class="card-icon success">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Present Days</h3>
+                        <p id="presentDays">0</p>
+                        <small>This month</small>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="card-icon warning">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Absent Days</h3>
+                        <p id="absentDays">0</p>
+                        <small>This month</small>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="card-icon info">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Average Hours</h3>
+                        <p id="avgHours">0</p>
+                        <small>Per day</small>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="card-icon primary">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Attendance Rate</h3>
+                        <p id="attendanceRate">0%</p>
+                        <small>This month</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div class="filters-section">
+                <h2>Attendance Records</h2>
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label for="dateRange">Date Range:</label>
+                        <input type="text" id="dateRange" placeholder="Select date range">
+                    </div>
+                    
+                    <div class="filter-group" id="employeeFilter" style="display: none;">
+                        <label for="employeeSelect">Employee:</label>
+                        <select id="employeeSelect">
+                            <option value="">All Employees</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="statusFilter">Status:</label>
+                        <select id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="present">Present</option>
+                            <option value="absent">Absent</option>
+                            <option value="half-day">Half Day</option>
+                            <option value="leave">Leave</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="applyFilters()">
+                        <i class="fas fa-filter"></i> Apply Filters
+                    </button>
+                    
+                    <button class="btn btn-secondary" onclick="exportAttendance()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Attendance Calendar -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>Monthly View</h2>
+                    <div class="month-navigation">
+                        <button class="btn-icon" onclick="prevMonth()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span id="currentMonth"></span>
+                        <button class="btn-icon" onclick="nextMonth()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="attendanceCalendar"></div>
+            </div>
+            
+            <!-- Attendance Table -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>Detailed Records</h2>
+                    <div id="recordCount">Showing 0 records</div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Day</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Total Hours</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                                <th id="adminActionsHeader" style="display: none;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTable">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <button class="btn btn-outline" id="prevPage" disabled>Previous</button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button class="btn btn-outline" id="nextPage" disabled>Next</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Edit Attendance Modal (Admin Only) -->
+    <div id="editAttendanceModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Attendance Record</h2>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editAttendanceForm">
+                    <input type="hidden" id="editRecordId">
+                    
+                    <div class="form-group">
+                        <label for="editDate">Date</label>
+                        <input type="date" id="editDate" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editCheckIn">Check In Time</label>
+                            <input type="time" id="editCheckIn">
+                        </div>
+                        <div class="form-group">
+                            <label for="editCheckOut">Check Out Time</label>
+                            <input type="time" id="editCheckOut">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editStatus">Status</label>
+                        <select id="editStatus" required>
+                            <option value="present">Present</option>
+                            <option value="absent">Absent</option>
+                            <option value="half-day">Half Day</option>
+                            <option value="leave">Leave</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editNotes">Notes</label>
+                        <textarea id="editNotes" rows="3" placeholder="Add any notes..."></textarea>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeEditModal()">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/attendance.js"></script>
+    <script>
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            initAttendancePage();
+        });
+    </script>
+</body>
+</html>
