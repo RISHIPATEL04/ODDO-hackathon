@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - HR Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-users"></i>
+                <h1>HR Management System</h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="login.html" class="active">Login</a>
+                <a href="signup.html">Sign Up</a>
+            </div>
+        </nav>
+        
+        <main class="auth-container">
+            <div class="auth-card">
+                <h2>Login to Your Account</h2>
+                <p>Enter your credentials to access the HRMS</p>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required placeholder="Enter your password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </div>
+                    
+                    <div class="form-footer">
+                        <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+                    </div>
+                </form>
+                
+                <div id="message" class="message hidden"></div>
+                
+                <div class="demo-credentials">
+                    <h3>Demo Credentials:</h3>
+                    <p><strong>Admin:</strong> admin@hrms.com / password123</p>
+                    <p><strong>Employee:</strong> employee@hrms.com / password123</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/auth.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = 'message';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store token and user data
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    messageDiv.textContent = 'Login successful! Redirecting...';
+                    messageDiv.className = 'message success';
+                    
+                    // Redirect based on role
+                    setTimeout(() => {
+                        if (data.user.role === 'admin') {
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            window.location.href = 'employee-dashboard.html';
+                        }
+                    }, 1500);
+                } else {
+                    messageDiv.textContent = data.message || 'Login failed';
+                    messageDiv.className = 'message error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Network error. Please try again.';
+                messageDiv.className = 'message error';
+                console.error('Login error:', error);
+            }
+        });
+        
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                // Verify token and redirect
+                fetch('http://localhost:5000/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => response.json())
+                .then(user => {
+                    if (user.role === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'employee-dashboard.html';
+                    }
+                })
+                .catch(() => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
