@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payroll - HR Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/payroll.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-users"></i>
+                <h2>HRMS</h2>
+            </div>
+            
+            <div class="user-info">
+                <div class="avatar">
+                    <i class="fas fa-user" id="avatarIcon"></i>
+                </div>
+                <h3 id="userName">Employee Name</h3>
+                <p id="userRole">Employee</p>
+                <p id="userEmpId">EMP001</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="employee-dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="employee-profile.html">
+                    <i class="fas fa-user"></i> My Profile
+                </a>
+                <a href="attendance.html">
+                    <i class="fas fa-calendar-check"></i> Attendance
+                </a>
+                <a href="leave.html">
+                    <i class="fas fa-calendar-alt"></i> Leave Management
+                </a>
+                <a href="payroll.html" class="active">
+                    <i class="fas fa-file-invoice-dollar"></i> Payroll
+                </a>
+                <a href="#" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Payroll & Salary</h1>
+                <div class="header-actions">
+                    <div class="date-display">
+                        <i class="fas fa-calendar"></i>
+                        <select id="payrollMonth" onchange="loadPayrollData()">
+                            <!-- Months will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="downloadSalarySlip()">
+                        <i class="fas fa-download"></i> Download Salary Slip
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Salary Overview -->
+            <div class="salary-overview-section">
+                <h2>Salary Overview</h2>
+                <div class="salary-summary">
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="summary-content">
+                            <h3>Gross Salary</h3>
+                            <p id="grossSalary">$0.00</p>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <div class="summary-content">
+                            <h3>Net Salary</h3>
+                            <p id="netSalary">$0.00</p>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <div class="summary-content">
+                            <h3>Total Deductions</h3>
+                            <p id="totalDeductions">$0.00</p>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="summary-content">
+                            <h3>Payment Status</h3>
+                            <p id="paymentStatus">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Salary Breakdown -->
+            <div class="salary-breakdown-section">
+                <h2>Salary Breakdown</h2>
+                <div class="breakdown-grid">
+                    <div class="breakdown-column">
+                        <h3><i class="fas fa-plus-circle"></i> Earnings</h3>
+                        <table class="breakdown-table">
+                            <tr>
+                                <td>Basic Salary</td>
+                                <td id="basicSalary">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>House Rent Allowance</td>
+                                <td id="hra">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Travel Allowance</td>
+                                <td id="ta">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Medical Allowance</td>
+                                <td id="ma">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Special Allowance</td>
+                                <td id="sa">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Performance Bonus</td>
+                                <td id="bonus">$0.00</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>Total Earnings</strong></td>
+                                <td><strong id="totalEarnings">$0.00</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="breakdown-column">
+                        <h3><i class="fas fa-minus-circle"></i> Deductions</h3>
+                        <table class="breakdown-table">
+                            <tr>
+                                <td>Income Tax</td>
+                                <td id="incomeTax">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Provident Fund</td>
+                                <td id="pf">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Professional Tax</td>
+                                <td id="pt">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Health Insurance</td>
+                                <td id="insurance">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Loan Deduction</td>
+                                <td id="loan">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Other Deductions</td>
+                                <td id="otherDeductions">$0.00</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>Total Deductions</strong></td>
+                                <td><strong id="totalDeductions2">$0.00</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="net-salary-display">
+                    <div class="net-salary-card">
+                        <h3>Net Salary Payable</h3>
+                        <p id="netSalaryPayable">$0.00</p>
+                        <small id="paymentDate">Payment date: -</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Salary History -->
+            <div class="salary-history-section">
+                <div class="section-header">
+                    <h2>Salary History</h2>
+                    <div class="filter-controls">
+                        <select id="historyYear" onchange="loadSalaryHistory()">
+                            <!-- Years will be populated by JavaScript -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Year</th>
+                                <th>Basic Salary</th>
+                                <th>Allowances</th>
+                                <th>Deductions</th>
+                                <th>Net Salary</th>
+                                <th>Status</th>
+                                <th>Payment Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salaryHistory">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="empty-state" id="noSalaryHistory">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <h3>No Salary History</h3>
+                    <p>No salary records found for the selected period.</p>
+                </div>
+            </div>
+            
+            <!-- Tax Information -->
+            <div class="tax-section">
+                <h2>Tax Information</h2>
+                <div class="tax-info-grid">
+                    <div class="tax-card">
+                        <h3><i class="fas fa-percentage"></i> Tax Summary</h3>
+                        <div class="tax-details">
+                            <div class="tax-item">
+                                <span>Annual Taxable Income</span>
+                                <span id="annualTaxable">$0.00</span>
+                            </div>
+                            <div class="tax-item">
+                                <span>Tax Paid This Year</span>
+                                <span id="taxPaid">$0.00</span>
+                            </div>
+                            <div class="tax-item">
+                                <span>Tax Saving Investments</span>
+                                <span id="taxSavings">$0.00</span>
+                            </div>
+                            <div class="tax-item total">
+                                <span>Projected Tax This Year</span>
+                                <span id="projectedTax">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tax-card">
+                        <h3><i class="fas fa-calendar-alt"></i> Tax Calendar</h3>
+                        <div class="tax-calendar">
+                            <div class="calendar-item">
+                                <span class="calendar-date">Apr 30</span>
+                                <span class="calendar-event">Advance Tax Payment (Q1)</span>
+                            </div>
+                            <div class="calendar-item">
+                                <span class="calendar-date">Jun 15</span>
+                                <span class="calendar-event">Tax Saving Declaration</span>
+                            </div>
+                            <div class="calendar-item">
+                                <span class="calendar-date">Sep 15</span>
+                                <span class="calendar-event">Advance Tax Payment (Q2)</span>
+                            </div>
+                            <div class="calendar-item">
+                                <span class="calendar-date">Dec 15</span>
+                                <span class="calendar-event">Advance Tax Payment (Q3)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Salary Slip Preview (Hidden by default) -->
+            <div id="salarySlipPreview" class="salary-slip-preview hidden">
+                <div class="slip-header">
+                    <h2>Salary Slip</h2>
+                    <p id="slipPeriod">Month, Year</p>
+                </div>
+                
+                <div class="slip-info">
+                    <div class="slip-info-item">
+                        <label>Employee ID</label>
+                        <span id="slipEmpId">-</span>
+                    </div>
+                    <div class="slip-info-item">
+                        <label>Employee Name</label>
+                        <span id="slipEmpName">-</span>
+                    </div>
+                    <div class="slip-info-item">
+                        <label>Designation</label>
+                        <span id="slipDesignation">-</span>
+                    </div>
+                    <div class="slip-info-item">
+                        <label>Payment Date</label>
+                        <span id="slipPaymentDate">-</span>
+                    </div>
+                </div>
+                
+                <div class="slip-breakdown">
+                    <h3>Salary Breakdown</h3>
+                    <table class="slip-table">
+                        <thead>
+                            <tr>
+                                <th>Earnings</th>
+                                <th>Amount</th>
+                                <th>Deductions</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="slipBreakdown">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td><strong>Total Earnings</strong></td>
+                                <td><strong id="slipTotalEarnings">$0.00</strong></td>
+                                <td><strong>Total Deductions</strong></td>
+                                <td><strong id="slipTotalDeductions">$0.00</strong></td>
+                            </tr>
+                            <tr class="net-row">
+                                <td colspan="3"><strong>Net Salary Payable</strong></td>
+                                <td><strong id="slipNetSalary">$0.00</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                
+                <div class="slip-footer">
+                    <p>This is a computer-generated salary slip and does not require a signature.</p>
+                    <p>For any queries, please contact the HR department.</p>
+                </div>
+                
+                <div class="slip-actions">
+                    <button class="btn btn-primary" onclick="printSalarySlip()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeSlipPreview()">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/auth.js"></script>
+    <script src="js/payroll.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initPayrollPage();
+        });
+    </script>
+</body>
+</html>
