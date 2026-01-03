@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard - HRMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-users"></i>
+                <h2>HRMS</h2>
+            </div>
+            
+            <div class="user-info">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 id="userName">Employee Name</h3>
+                <p id="userRole">Employee</p>
+                <p id="userEmpId">EMP001</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="employee-dashboard.html" class="active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="employee-profile.html">
+                    <i class="fas fa-user"></i> My Profile
+                </a>
+                <a href="attendance.html">
+                    <i class="fas fa-calendar-check"></i> Attendance
+                </a>
+                <a href="leave.html">
+                    <i class="fas fa-calendar-alt"></i> Leave Management
+                </a>
+                <a href="payroll.html">
+                    <i class="fas fa-file-invoice-dollar"></i> Payroll
+                </a>
+                <a href="#" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Employee Dashboard</h1>
+                <div class="header-actions">
+                    <div class="date-display">
+                        <i class="fas fa-calendar"></i>
+                        <span id="currentDate"></span>
+                    </div>
+                    <button id="checkInBtn" class="btn btn-success">
+                        <i class="fas fa-sign-in-alt"></i> Check In
+                    </button>
+                    <button id="checkOutBtn" class="btn btn-warning" disabled>
+                        <i class="fas fa-sign-out-alt"></i> Check Out
+                    </button>
+                </div>
+            </header>
+            
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-icon primary">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Attendance Today</h3>
+                        <p id="attendanceStatus">Not Checked In</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-icon success">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Leave Balance</h3>
+                        <p id="leaveBalance">15 days</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-icon info">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Net Salary</h3>
+                        <p id="netSalary">$0.00</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-icon warning">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Notifications</h3>
+                        <p id="notificationCount">0 new</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-sections">
+                <!-- Recent Activity -->
+                <section class="section">
+                    <h2>Recent Activity</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p>Checked in at 9:00 AM</p>
+                                <span class="activity-time">Today</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p>Leave application submitted</p>
+                                <span class="activity-time">2 days ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p>Salary slip generated</p>
+                                <span class="activity-time">1 week ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Quick Actions -->
+                <section class="section">
+                    <h2>Quick Actions</h2>
+                    <div class="quick-actions">
+                        <a href="leave.html" class="quick-action">
+                            <i class="fas fa-plus"></i>
+                            <span>Apply for Leave</span>
+                        </a>
+                        <a href="employee-profile.html" class="quick-action">
+                            <i class="fas fa-edit"></i>
+                            <span>Update Profile</span>
+                        </a>
+                        <a href="attendance.html" class="quick-action">
+                            <i class="fas fa-history"></i>
+                            <span>View Attendance</span>
+                        </a>
+                        <a href="payroll.html" class="quick-action">
+                            <i class="fas fa-download"></i>
+                            <span>Download Salary Slip</span>
+                        </a>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        // Check authentication
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        
+        if (!token || user.role !== 'employee') {
+            window.location.href = 'login.html';
+        }
+        
+        // Display user info
+        document.getElementById('userName').textContent = user.name || 'Employee Name';
+        document.getElementById('userRole').textContent = user.role || 'Employee';
+        document.getElementById('userEmpId').textContent = user.employeeId || 'EMP001';
+        
+        // Set current date
+        const now = new Date();
+        document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Check today's attendance
+        async function checkTodayAttendance() {
+            try {
+                const response = await fetch('http://localhost:5000/api/attendance/my-attendance', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const attendance = await response.json();
+                    const today = new Date().toISOString().split('T')[0];
+                    
+                    const todayRecord = attendance.find(record => {
+                        const recordDate = new Date(record.date).toISOString().split('T')[0];
+                        return recordDate === today;
+                    });
+                    
+                    if (todayRecord) {
+                        document.getElementById('attendanceStatus').textContent = 
+                            todayRecord.status.charAt(0).toUpperCase() + todayRecord.status.slice(1);
+                        
+                        if (todayRecord.checkIn && !todayRecord.checkOut) {
+                            document.getElementById('checkInBtn').disabled = true;
+                            document.getElementById('checkOutBtn').disabled = false;
+                        } else if (todayRecord.checkIn && todayRecord.checkOut) {
+                            document.getElementById('checkInBtn').disabled = true;
+                            document.getElementById('checkOutBtn').disabled = true;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking attendance:', error);
+            }
+        }
+        
+        // Check in
+        document.getElementById('checkInBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/attendance/checkin', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Checked in successfully!');
+                    document.getElementById('checkInBtn').disabled = true;
+                    document.getElementById('checkOutBtn').disabled = false;
+                    document.getElementById('attendanceStatus').textContent = 'Present';
+                } else {
+                    alert(data.message || 'Check in failed');
+                }
+            } catch (error) {
+                console.error('Check in error:', error);
+                alert('Network error. Please try again.');
+            }
+        });
+        
+        // Check out
+        document.getElementById('checkOutBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/attendance/checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Checked out successfully!');
+                    document.getElementById('checkOutBtn').disabled = true;
+                } else {
+                    alert(data.message || 'Check out failed');
+                }
+            } catch (error) {
+                console.error('Check out error:', error);
+                alert('Network error. Please try again.');
+            }
+        });
+        
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        });
+        
+        // Load dashboard data
+        checkTodayAttendance();
+        
+        // Load salary data
+        async function loadSalaryData() {
+            try {
+                const response = await fetch('http://localhost:5000/api/payroll/my-payroll', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const payroll = await response.json();
+                    if (payroll.length > 0) {
+                        document.getElementById('netSalary').textContent = 
+                            `$${payroll[0].netSalary?.toLocaleString() || '0.00'}`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading salary:', error);
+            }
+        }
+        
+        loadSalaryData();
+    </script>
+</body>
+</html>
